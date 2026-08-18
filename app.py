@@ -240,7 +240,7 @@ def remove_watermark():
             
 @app.route('/api/download/<filename>')
 def download_file(filename):
-    """Download processed image."""
+    """Done!! Now Download."""
     return send_from_directory(PROCESSED_FOLDER, filename, as_attachment=True)
 
 @app.route('/api/batch', methods=['POST'])
@@ -328,7 +328,17 @@ def detect_only():
 def get_info():
     """Get information about supported formats and methods."""
     return jsonify({
-        'supported_formats': ['.png', '.jpg', '.jpeg', '.webp'],
+       ALLOWED_EXTENSIONS = {
+    'txt',
+    'pdf',
+    'docx',
+    'doc',
+    'png',
+    'jpg',
+    'jpeg',
+    'webp',
+    'gif'
+     }        
         'methods': ['opencv', 'opencv_ns'],
         'features': [
             'visible watermark detection',
