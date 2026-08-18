@@ -72,50 +72,168 @@ def upload_file():
             'synthid': synthid
         }
     })
-
 @app.route('/api/remove', methods=['POST'])
 def remove_watermark():
     """Remove watermark from uploaded image."""
-    data = request.json
-    file_id = data.get('file_id')
-    method = data.get('method', 'opencv')
-    region = data.get('region', None)  # [x, y, width, height]
-    
-    if not file_id:
-        return jsonify({'error': 'No file ID provided'}), 400
-    
-    # Find the uploaded file
-    upload_dir = UPLOAD_FOLDER
-    uploaded_file = None
-    for f in os.listdir(upload_dir):
-        if f.startswith(file_id):
-            uploaded_file = f
-            break
-    
-    if not uploaded_file:
-        return jsonify({'error': 'File not found'}), 404
-    
-    input_path = os.path.join(UPLOAD_FOLDER, uploaded_file)
-    output_filename = f"clean_{uploaded_file}"
-    output_path = os.path.join(PROCESSED_FOLDER, output_filename)
-    
+
     try:
-        if region:
-            # Remove from specific region
-            result = remover.remove_visible_region(input_path, output_path, region)
+        data = request.get_json(silent=True) or {}
+
+        file_id = data.get('file_id')
+        method = data.get('method', 'opencv')
+        mode = data.get('mode', 'auto')
+        region = data.get('region')
+
+        # -----------------------------
+        # Validate file ID
+        # -----------------------------
+        if not file_id:
+            return jsonify({
+                'success': False,
+                'error': 'No file ID provided'
+            }), 400
+
+        # -----------------------------
+        # Validate removal method
+        # -----------------------------
+        allowed_methods = {
+            'opencv',
+            'opencv_ns'
+        }
+
+        if method not in allowed_methods:
+            return jsonify({
+                'success': False,
+                'error': f'Unsupported removal method: {method}'
+            }), 400
+
+        # -----------------------------
+        # Validate processing mode
+        # -----------------------------
+        allowed_modes = {
+            'auto',
+            'manual'
+        }
+
+        if mode not in allowed_modes:
+            return jsonify({
+                'success': False,
+                'error': f'Unsupported processing mode: {mode}'
+            }), 400
+
+        # -----------------------------
+        # Manual mode requires region
+        # -----------------------------
+        if mode == 'manual':
+
+            if not region:
+                return jsonify({
+                    'success': False,
+                    'error': 'Manual mode requires a watermark region.'
+                }), 400
+
+            if not isinstance(region, list) or len(region) != 4:
+                return jsonify({
+                    'success': False,
+                    'error': 'Region must be [x, y, width, height].'
+                }), 400
+
+            try:
+                region = [int(value) for value in region]
+            except (TypeError, ValueError):
+                return jsonify({
+                    'success': False,
+                    'error': 'Region coordinates must be integers.'
+                }), 400
+
+        # -----------------------------
+        # Find uploaded file
+        # -----------------------------
+        uploaded_file = None
+
+        for filename in os.listdir(UPLOAD_FOLDER):
+
+            if filename.startswith(file_id):
+                uploaded_file = filename
+                break
+
+        if not uploaded_file:
+            return jsonify({
+                'success': False,
+                'error': 'Uploaded file not found.'
+            }), 404
+
+        input_path = os.path.join(
+            UPLOAD_FOLDER,
+            uploaded_file
+        )
+
+        output_filename = f"clean_{uploaded_file}"
+
+        output_path = os.path.join(
+            PROCESSED_FOLDER,
+            output_filename
+        )
+
+        # -----------------------------
+        # PROCESS IMAGE
+        # -----------------------------
+
+        if mode == 'manual':
+
+            result = remover.remove_visible_region(
+                input_path,
+                output_path,
+                region
+            )
+
         else:
-            # Auto-detect and remove
-            result = remover.remove_watermark(input_path, output_path, method)
-        
+
+            result = remover.remove_watermark(
+                input_path,
+                output_path,
+                method
+            )
+
+        # -----------------------------
+        # Verify output exists
+        # -----------------------------
+
+        if not os.path.exists(output_path):
+
+            return jsonify({
+                'success': False,
+                'error': 'Processing completed but output file was not created.'
+            }), 500
+
+        # -----------------------------
+        # Return result
+        # -----------------------------
+
         return jsonify({
             'success': True,
+            'file_id': file_id,
+            'filename': uploaded_file,
+            'method': method,
+            'mode': mode,
             'output_file': output_filename,
-            'output_path': output_path,
             'download_url': f'/api/download/{output_filename}'
         })
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
 
+    except Exception as e:
+
+        app.logger.exception(
+            "Watermark removal failed"
+        )
+
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+           
+           
+            
 @app.route('/api/download/<filename>')
 def download_file(filename):
     """Download processed image."""
