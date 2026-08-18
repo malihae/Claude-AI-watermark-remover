@@ -9,6 +9,10 @@ from detectors import AdvancedDetector
 import json
 from pathlib import Path
 
+from PyPDF2 import PdfReader
+from docx import Document
+pip install PyPDF2 python-docx
+
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
 CORS(app)
 
