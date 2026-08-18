@@ -15,7 +15,7 @@ CORS(app)
 # Configuration
 UPLOAD_FOLDER = 'uploads'
 PROCESSED_FOLDER = 'processed'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp', 'gif'}
+'supported_formats': ['.png', '.jpg', '.jpeg', '.webp', '.gif'],
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(PROCESSED_FOLDER, exist_ok=True)
