@@ -1,0 +1,94 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude AI Watermark Remover</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+                    <circle cx="24" cy="24" r="24" fill="#10A37F"/>
+                    <path d="M16 20L24 28L32 20" stroke="white" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <h1>AI Watermark Remover</h1>
+            </div>
+            <p class="subtitle">Remove visible and invisible AI watermarks from your images</p>
+        </header>
+
+        <main>
+            <!-- Upload Section -->
+            <section class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <input type="file" id="fileInput" accept="image/*" multiple>
+                    <div class="upload-content">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <h3>Drop your images here</h3>
+                        <p>or click to browse</p>
+                        <span class="file-types">Supports PNG, JPG, JPEG, WEBP</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section class="settings-section">
+                <div class="settings-grid">
+                    <div class="setting-group">
+                        <label>Removal Method</label>
+                        <select id="methodSelect">
+                            <option value="opencv">OpenCV (Telea)</option>
+                            <option value="opencv_ns">OpenCV (Navier-Stokes)</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label>Processing Mode</label>
+                        <select id="modeSelect">
+                            <option value="auto">Auto Detect</option>
+                            <option value="manual">Manual Region</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Processing Section -->
+            <section class="processing-section" id="processingSection" style="display:none;">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <span class="progress-text" id="progressText">Processing...</span>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display:none;">
+                <h2>Results</h2>
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Results will be dynamically added -->
+                </div>
+            </section>
+
+            <!-- Batch Results -->
+            <section class="batch-results" id="batchResults" style="display:none;">
+                <h2>Batch Processing Summary</h2>
+                <div class="batch-summary" id="batchSummary"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>© 2024 AI Watermark Remover | For lawful use on your own content</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
