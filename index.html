@@ -16,7 +16,7 @@
                     <circle cx="24" cy="24" r="24" fill="#10A37F"/>
                     <path d="M16 20L24 28L32 20" stroke="white" stroke-width="3" stroke-linecap="round"/>
                 </svg>
-                <h1>AI Watermark Remover</h1>
+                <h1>Claude AI Watermark Remover</h1>
             </div>
             <p class="subtitle">Remove visible and invisible AI watermarks from your images</p>
         </header>
@@ -25,14 +25,19 @@
             <!-- Upload Section -->
             <section class="upload-section">
                 <div class="upload-area" id="uploadArea">
-                    <input type="file" id="fileInput" accept="image/*" multiple>
+                       <input
+                          type="file"
+                          id="fileInput"
+                          accept=".txt,.pdf,.doc,.docx"
+                          multiple
+                        >
                     <div class="upload-content">
                         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                             <polyline points="17 8 12 3 7 8"/>
                             <line x1="12" y1="3" x2="12" y2="15"/>
                         </svg>
-                        <h3>Drop your images here</h3>
+                        <h3>Drop it here</h3>
                         <p>or click to browse</p>
                         <span class="file-types">Supports PNG, JPG, JPEG, WEBP</span>
                     </div>
